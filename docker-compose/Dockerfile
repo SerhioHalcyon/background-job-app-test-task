@@ -22,6 +22,9 @@ RUN docker-php-ext-install zip pdo_mysql exif pcntl bcmath gd
 RUN pecl install memcached
 RUN docker-php-ext-enable memcached
 
+RUN pecl install redis
+RUN docker-php-ext-enable redis
+
 # Create system user to run Composer and Artisan Commands
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
 
