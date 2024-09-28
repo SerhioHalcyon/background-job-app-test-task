@@ -1,0 +1,85 @@
+services:
+    app:
+        build:
+            context: ./
+            dockerfile: ./docker-compose/Dockerfile
+        image: delivery-service
+        container_name: background-job-app
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        networks:
+            - background-job
+
+    web:
+        image: nginx:1.23.3-alpine
+        container_name: background-job-nginx
+        restart: unless-stopped
+        ports:
+            - ${APP_PORT:-8000}:80
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx:/etc/nginx/conf.d/default.conf
+        networks:
+            - background-job
+
+    database:
+        image: mysql:8.0
+        container_name: background-job-mysql
+        restart: unless-stopped
+        ports:
+            - ${FORWARD_DB_PORT:-3306}:3306
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+        volumes:
+            - mysql:/var/lib/mysql
+        networks:
+            - background-job
+
+    redis:
+        image: redis:alpine
+        container_name: background-job-redis
+        restart: unless-stopped
+        ports:
+            - ${FORWARD_REDIS_PORT:-6379}:6379
+        volumes:
+            - redis:/data
+        networks:
+            - background-job
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
+
+    memcached:
+        image: memcached:alpine
+        container_name: background-job-memcached
+        restart: unless-stopped
+        ports:
+            - ${FORWARD_MEMCACHED_PORT:-11211}:11211
+        networks:
+            - background-job
+
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: background-job-phpmyadmin
+        restart: unless-stopped
+        ports:
+            - ${FORWARD_PHPMYADMIN_PORT:-8080}:80
+        environment:
+            - PMA_HOST=database
+        networks:
+            - background-job
+
+networks:
+    background-job:
+        driver: bridge
+volumes:
+    mysql:
+        driver: local
+    redis:
+        driver: local
