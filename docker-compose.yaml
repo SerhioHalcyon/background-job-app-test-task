@@ -3,7 +3,7 @@ services:
         build:
             context: ./
             dockerfile: ./docker-compose/Dockerfile
-        image: delivery-service
+        image: background-job
         container_name: background-job-app
         restart: unless-stopped
         working_dir: /var/www/

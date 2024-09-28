@@ -12,11 +12,15 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     zip \
-    unzip
+    unzip \
+    libmemcached-dev zlib1g-dev
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install zip pdo_mysql exif pcntl bcmath gd
+
+RUN pecl install memcached
+RUN docker-php-ext-enable memcached
 
 # Create system user to run Composer and Artisan Commands
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
