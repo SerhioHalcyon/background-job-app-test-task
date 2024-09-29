@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('states', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->json('coordinates')->nullable();
+            $table->geometry('coordinates')->nullable();
             $table->timestamps();
         });
     }

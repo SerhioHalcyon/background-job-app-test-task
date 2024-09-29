@@ -39,8 +39,13 @@ class DataController extends Controller
 
         if (Cache::has($cacheKey)) {
             $cachedData = Cache::get($cacheKey);
+
             return response()->json([
-                'data' => $cachedData,
+                'data' => [
+                    'geo' => [
+                        'oblast' => $cachedData,
+                    ],
+                ],
                 'cache' => 'hit'
             ]);
         }
@@ -51,8 +56,13 @@ class DataController extends Controller
 
         if ($geoData) {
             Cache::put($cacheKey, $geoData, 3600);
+
             return response()->json([
-                'data' => $geoData,
+                'data' => [
+                    'geo' => [
+                        'oblast' => $geoData,
+                    ],
+                ],
                 'cache' => 'miss'
             ]);
         }

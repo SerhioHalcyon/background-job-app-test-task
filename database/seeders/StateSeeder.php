@@ -44,7 +44,6 @@ class StateSeeder extends Seeder
         foreach ($states as $state) {
             State::updateOrCreate(
                 ['name' => $state],
-                ['coordinates' => json_encode([])]
             );
         }
     }

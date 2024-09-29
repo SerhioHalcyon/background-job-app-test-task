@@ -24,10 +24,10 @@ class State extends Model
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'coordinates' => 'array',
-        ];
-    }
+//    protected function casts(): array
+//    {
+//        return [
+//            'coordinates' => 'array',
+//        ];
+//    }
 }

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Services\Contracts\DataRepositoryContract;
 use App\Services\Contracts\DataServiceContract;
+use App\Services\DTO\State;
+use Illuminate\Support\Facades\DB;
 
 class DataService implements DataServiceContract
 {
@@ -18,16 +20,31 @@ class DataService implements DataServiceContract
         return $this->repository->getStates();
     }
 
-    public function storeData($states): bool
+    public function storeData(array $states): bool
     {
-        $states = $states->map(function ($state) {
-            return [
-                'name' => $state->name,
-                'coordinates' => json_encode($state->coordinates),
-            ];
-        });
+        $dataToStore = [];
 
-        $this->repository->updateStates($states->toArray());
+        foreach ($states as $state) {
+            if (! $state instanceof State) {
+                continue;
+            }
+
+            $data = $state->toArray();
+            $data['coordinates'] = $this->processCoordinatesToWKT($data['coordinates']);
+            $dataToStore[] = $data;
+        }
+
+        $this->repository->updateStates($dataToStore);
+
+        return true;
+    }
+
+    public function storeSingleData(State $state): bool
+    {
+        $state = $state->toArray();
+        $state['coordinates'] = $this->processCoordinatesToWKT($state['coordinates']);
+
+        $this->repository->updateStates([$state]);
 
         return true;
     }
@@ -35,5 +52,12 @@ class DataService implements DataServiceContract
     public function deleteData(): bool
     {
         return $this->repository->deleteStateData();
+    }
+
+    private function processCoordinatesToWKT(array $coordinates)
+    {
+        $polygonWKT = "POLYGON((" . implode(", ", array_map(fn($coord) => "{$coord[0]} {$coord[1]}", $coordinates)) . "))";
+
+        return DB::raw("ST_GeomFromText('$polygonWKT')");
     }
 }

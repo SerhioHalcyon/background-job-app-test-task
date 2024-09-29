@@ -47,7 +47,13 @@ class GeoData
                 $data = $response->json();
 
                 if (!empty($data) && isset($data[0]['geojson']['coordinates'][0])) {
-                    return $data[0]['geojson']['coordinates'][0];
+
+                    switch ($data[0]['geojson']['type']) {
+                        case PolygonType::POLYGON->value:
+                            return $data[0]['geojson']['coordinates'][0];
+
+                        case PolygonType::MULTIPOLYGON->value:
+                            return $data[0]['geojson']['coordinates'][0][0];                    }
                 }
             } else {
                 Log::error(
