@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Jobs\RefreshDataJob;
 use App\Models\State;
+use App\Services\DataService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class DataController extends Controller
 {
+    public function __construct(private DataService $service)
+    {
+        //
+    }
+
     public function refresh(Request $request)
     {
         $delaySeconds = $request->query('delaySeconds', 0);
@@ -59,7 +65,7 @@ class DataController extends Controller
     {
         Cache::flush();
 
-        State::query()->update(['coordinates' => json_encode([])]);
+        $this->service->deleteData();
 
         return response()->json([
             'data' => ['status' => 'success']
