@@ -12,6 +12,17 @@ class DataRepository implements DataRepositoryContract
         return State::all();
     }
 
+    public function searchStateByPoint(string $wktGeoPoint): array
+    {
+        return State::whereRaw(
+            sprintf(
+                "ST_Contains(coordinates, ST_GeomFromText('%s'))",
+                $wktGeoPoint,
+            ))
+            ->firstOrFail()
+            ->toArray();
+    }
+
     public function updateStates(array $states): void
     {
         State::upsert($states, ['name'], ['coordinates']);

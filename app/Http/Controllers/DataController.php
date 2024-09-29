@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\CacheStatus;
 use App\Jobs\RefreshDataJob;
 use App\Services\DataService;
+use App\Services\DTO\GeoPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class DataController extends Controller
 {
-    public function __construct(private DataService $service)
+    public function __construct(private DataService $dataService)
     {
         //
     }
@@ -28,14 +30,12 @@ class DataController extends Controller
 
     public function search(Request $request)
     {
-        $lat = $request->query('lat');
         $lon = $request->query('lon');
+        $lat = $request->query('lat');
 
-        if (!$lat || !$lon) {
-            return response()->json(['error' => 'Invalid coordinates'], 400);
-        }
+        $getPoint = new GeoPoint($lon, $lat);
 
-        $cacheKey = "geo_data_{$lat}_{$lon}";
+        $cacheKey = "geo_data_{$lon}_{$lat}";
 
         if (Cache::has($cacheKey)) {
             $cachedData = Cache::get($cacheKey);
@@ -46,24 +46,20 @@ class DataController extends Controller
                         'oblast' => $cachedData,
                     ],
                 ],
-                'cache' => 'hit'
+                'cache' => CacheStatus::HIT->value,
             ]);
         }
 
-        $geoData = GeoData::where('latitude', $lat)
-            ->where('longitude', $lon)
-            ->first();
-
-        if ($geoData) {
-            Cache::put($cacheKey, $geoData, 3600);
+        if ($state = $this->dataService->searchData($getPoint)) {
+            Cache::put($cacheKey, $state['name'], 3600);
 
             return response()->json([
                 'data' => [
                     'geo' => [
-                        'oblast' => $geoData,
+                        'oblast' => $state['name'],
                     ],
                 ],
-                'cache' => 'miss'
+                'cache' => CacheStatus::MISS->value,
             ]);
         }
 
@@ -74,7 +70,7 @@ class DataController extends Controller
     {
         Cache::flush();
 
-        $this->service->deleteData();
+        $this->dataService->deleteData();
 
         return response()->json([
             'data' => ['status' => 'success']
