@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\RefreshDataJob;
-use App\Models\State;
 use App\Services\DataService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
