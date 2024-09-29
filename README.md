@@ -92,7 +92,24 @@ using the Nominatim API and saves the updated data in the database.
 - Data is fetched via Nominatim API with a 1-second delay
   between requests to comply with the API rate limits.
 
-### 2. Clear Region Polygon Data
+### 2. Find State by Coordinates
+
+This endpoint takes longitude and latitude as parameters 
+and returns the state in which the point is located.
+
+**Method:** `GET`
+
+**URL:** `/data?lon=30.5234&lat=50.4501`
+
+**Description:**
+- Fetches the region based on the given geographic coordinates 
+  (longitude and latitude).
+- Uses ST_Contains to check if the point is within 
+  the polygons stored for each region.
+- Returns the name of the region if the point falls within 
+  the boundaries of a known region.
+
+### 3. Clear State Polygon Data
 
 This endpoint clears the polygon data for each state
 so that it can be refreshed without recreating records.
