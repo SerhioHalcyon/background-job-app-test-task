@@ -30,6 +30,6 @@ class DataRepository implements DataRepositoryContract
 
     public function deleteStateData(): bool
     {
-        return State::query()->update(['coordinates' => json_encode([])]);
+        return State::query()->update(['coordinates' => null]);
     }
 }
