@@ -16,4 +16,9 @@ class DataRepository implements DataRepositoryContract
     {
         State::upsert($states, ['name'], ['coordinates']);
     }
+
+    public function deleteStateData(): bool
+    {
+        return State::query()->update(['coordinates' => json_encode([])]);
+    }
 }

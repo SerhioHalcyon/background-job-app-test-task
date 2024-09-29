@@ -6,4 +6,5 @@ interface DataServiceContract
 {
     public function getData();
     public function storeData($states): bool;
+    public function deleteData(): bool;
 }

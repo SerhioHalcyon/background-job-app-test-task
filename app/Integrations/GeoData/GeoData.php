@@ -21,7 +21,7 @@ class GeoData
     {
         //
     }
-    
+
     public function fetchPolygons(
         string $country = 'Ukraine',
         ?string $state = null,

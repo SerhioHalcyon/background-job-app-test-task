@@ -31,4 +31,9 @@ class DataService implements DataServiceContract
 
         return true;
     }
+
+    public function deleteData(): bool
+    {
+        return $this->repository->deleteStateData();
+    }
 }
