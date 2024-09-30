@@ -42,12 +42,11 @@ class RefreshDataJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->fail('Something went wrong.');
+//        $this->fail('Something went wrong.');
         $states = $this->dataService->getData();
 //        $polygons = [];
 
         foreach ($states as $state) {
-            break;
 //            $polygons[] = [
 //                'state' => $state->name,
 //                'coordinates' => $this->geoData->fetchPolygons(state: $state->name),

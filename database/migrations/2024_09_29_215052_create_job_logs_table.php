@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('job_logs', function (Blueprint $table) {
             $table->id();
-            $table->integer('state')->default(0);
-            $table->timestamp('create_ts')->nullable();
-            $table->timestamp('scheduled_for_ts')->nullable();
+            $table->integer('state');
+            $table->timestamp('create_ts');
+            $table->timestamp('scheduled_for_ts');
             $table->timestamps();
         });
     }
