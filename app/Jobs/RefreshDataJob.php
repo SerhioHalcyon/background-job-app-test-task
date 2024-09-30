@@ -4,16 +4,12 @@ namespace App\Jobs;
 
 use App\Events\JobCompleted;
 use App\Events\JobFailed;
-use App\Integrations\GeoData\GeoData;
-use App\Models\JobLog;
+use App\Integrations\GeoData\GeoDataService;
 use App\Services\Contracts\DataServiceContract;
-use App\Services\DataService;
 use App\Services\DTO\State;
-use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class RefreshDataJob implements ShouldQueue
@@ -21,7 +17,7 @@ class RefreshDataJob implements ShouldQueue
     use Queueable;
 
     public int $jobDelay;
-    private GeoData $geoData;
+    private GeoDataService $geoData;
     private DataServiceContract $dataService;
 
     /**
@@ -33,8 +29,8 @@ class RefreshDataJob implements ShouldQueue
         ini_set('memory_limit', '512M');
 
         $this->jobDelay = $jobDelay;
-        $this->geoData = App::make(GeoData::class);
-        $this->dataService = App::make(DataService::class);
+        $this->geoData = App::make(GeoDataService::class);
+        $this->dataService = App::make(DataServiceContract::class);
     }
 
     /**
