@@ -2,11 +2,18 @@
 
 namespace App\Providers;
 
+use App\Events\JobCompleted as CustomJobCompleted;
+use App\Events\JobFailed as CustomJobFailed;
+use App\Listeners\JobEventSubscriber;
 use App\Repositories\DataRepository;
 use App\Services\Contracts\DataRepositoryContract;
 use App\Services\Contracts\DataServiceContract;
 use App\Services\DataService;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +39,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+//        Queue::after(function (JobProcessed $event) {
+//            event(new CustomJobCompleted($event->job));
+//            // $event->connectionName
+//            // $event->job
+//            // $event->job->payload()
+//        });
+
+//        Queue::failing(function (JobFailed $event) {
+//            event(new CustomJobFailed($event->job));
+//            // $event->connectionName
+//            // $event->job
+//            // $event->exception
+//        });
     }
 }
