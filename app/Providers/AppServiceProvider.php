@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Events\JobCompleted as CustomJobCompleted;
 use App\Events\JobFailed as CustomJobFailed;
+use App\Integrations\GeoData\GeoDataProviderContract;
+use App\Integrations\GeoData\GeoDataService;
 use App\Listeners\JobEventSubscriber;
 use App\Repositories\DataRepository;
 use App\Services\Contracts\DataRepositoryContract;
@@ -23,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Integrations
+//        $this->app->bind(GeoDataService::class, function (Application $app) {
+//            return $app->make(GeoDataService::class);
+//        });
+
         // Services
         $this->app->bind(DataServiceContract::class, function (Application $app) {
             return $app->make(DataService::class);
