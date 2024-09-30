@@ -20,4 +20,9 @@ Route::controller(DataController::class)
         Route::delete('/', 'delete')->name('delete');
     });
 
-Route::get('/jobs', [JobController::class, 'list']);
+Route::controller(JobController::class)
+    ->prefix('jobs')
+    ->name('jobs.')
+    ->group(function () {
+        Route::get('/', [JobController::class, 'list'])->name('list');
+    });

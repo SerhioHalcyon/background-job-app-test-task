@@ -6,7 +6,8 @@ The purpose of this test task is to implement a service
 that integrates with an external geographical API (Nominatim) 
 to retrieve polygons of Ukraine's regions. 
 It also provides the ability to update and clear the polygon data 
-for these regions in the database.
+for these states in the database, search the state by coordinates, 
+and log queue jobs.
 
 ## Technologies
 
@@ -120,3 +121,17 @@ so that it can be refreshed without recreating records.
 
 **Description:**
 - Clears the `coordinates` column for all states in the database.
+
+### 4. List Jobs Status
+
+This endpoint returns the list of job statuses, 
+including the creation time, scheduled time, 
+and state (whether the job was successful or failed).
+
+**Method:** `GET`
+
+**URL:** `/jobs`
+
+**Description:**
+- Fetches a list of all jobs, including their creation timestamp, 
+  scheduled timestamp, and the current state.

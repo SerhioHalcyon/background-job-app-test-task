@@ -18,10 +18,10 @@ class DataController extends Controller
 
     public function refresh(Request $request)
     {
-        $delaySeconds = $request->query('delaySeconds', 0);
+        $delaySeconds = (int) $request->query('delaySeconds', 0);
 
-        RefreshDataJob::dispatchSync();
-//        RefreshDataJob::dispatch()->delay(now()->addSeconds($delaySeconds));
+        RefreshDataJob::dispatchSync($delaySeconds);
+//        RefreshDataJob::dispatch($delaySeconds)->delay(now()->addSeconds($delaySeconds));
 
         return response()->json([
             'data' => ['success' => true]
