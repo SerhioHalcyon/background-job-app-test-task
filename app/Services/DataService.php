@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Services\Contracts\DataRepositoryContract;
+use App\Repositories\CachedDataRepository;
 use App\Services\Contracts\DataServiceContract;
 use App\Services\DTO\GeoPoint;
 use App\Services\DTO\State;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class DataService implements DataServiceContract
 {
 
-    public function __construct(private DataRepositoryContract $repository)
+    public function __construct(private CachedDataRepository $repository)
     {
         //
     }
@@ -23,7 +23,7 @@ class DataService implements DataServiceContract
 
     public function searchData(GeoPoint $geoPoint): array
     {
-        $state = $this->repository->searchStateByPoint($geoPoint->toWKT());
+        $state = $this->repository->searchStateByPoint($geoPoint);
 
         return $state;
     }

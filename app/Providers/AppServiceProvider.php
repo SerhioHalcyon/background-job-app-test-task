@@ -7,7 +7,9 @@ use App\Events\JobFailed as CustomJobFailed;
 use App\Integrations\GeoData\GeoDataProviderContract;
 use App\Integrations\GeoData\GeoDataService;
 use App\Listeners\JobEventSubscriber;
+use App\Repositories\CachedDataRepository;
 use App\Repositories\DataRepository;
+use App\Services\Contracts\CachedDataRepositoryContract;
 use App\Services\Contracts\DataRepositoryContract;
 use App\Services\Contracts\DataServiceContract;
 use App\Services\DataService;
@@ -36,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Repositories
+        $this->app->bind(CachedDataRepositoryContract::class, function (Application $app) {
+            return $app->make(CachedDataRepository::class);
+        });
         $this->app->bind(DataRepositoryContract::class, function (Application $app) {
             return $app->make(DataRepository::class);
         });

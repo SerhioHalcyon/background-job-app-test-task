@@ -34,7 +34,10 @@ class DataController extends Controller
         $lat = $request->query('lat');
 
         $getPoint = new GeoPoint($lon, $lat);
+        $data = $this->dataService->searchData($getPoint);
 
+        return response()->json($data);
+        dd('This must be the end');
         $cacheKey = "geo_data_{$lon}_{$lat}";
 
         if (Cache::has($cacheKey)) {
