@@ -63,6 +63,13 @@ class CachedDataRepository implements CachedDataRepositoryContract
         ];
     }
 
+    public function deleteStateData(): bool
+    {
+        Cache::flush();
+
+        return State::query()->update(['coordinates' => null]);
+    }
+
     public function __call($method, $parameters)
     {
         return $this->dataRepository->$method(...$parameters);
