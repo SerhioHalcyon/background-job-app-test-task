@@ -34,46 +34,17 @@ class DataController extends Controller
         $lat = $request->query('lat');
 
         $getPoint = new GeoPoint($lon, $lat);
+        $data = $this->dataService->searchData($getPoint);
 
-        $cacheKey = "geo_data_{$lon}_{$lat}";
-
-        if (Cache::has($cacheKey)) {
-            $cachedData = Cache::get($cacheKey);
-
-            return response()->json([
-                'data' => [
-                    'geo' => [
-                        'oblast' => $cachedData,
-                    ],
-                ],
-                'cache' => CacheStatus::HIT->value,
-            ]);
-        }
-
-        if ($state = $this->dataService->searchData($getPoint)) {
-            Cache::put($cacheKey, $state['name'], 3600);
-
-            return response()->json([
-                'data' => [
-                    'geo' => [
-                        'oblast' => $state['name'],
-                    ],
-                ],
-                'cache' => CacheStatus::MISS->value,
-            ]);
-        }
-
-        return response()->json(['data' => null], 404);
+        return response()->json($data);
     }
 
     public function delete()
     {
-        Cache::flush();
-
-        $this->dataService->deleteData();
+        $isDeleted = $this->dataService->deleteData();
 
         return response()->json([
-            'data' => ['status' => 'success']
+            'data' => ['status' => $isDeleted ? 'success' : 'failure']
         ]);
     }
 }

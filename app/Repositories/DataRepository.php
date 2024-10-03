@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\State;
 use App\Services\Contracts\DataRepositoryContract;
+use App\Services\DTO\GeoPoint;
 
 class DataRepository implements DataRepositoryContract
 {
@@ -12,12 +13,12 @@ class DataRepository implements DataRepositoryContract
         return State::all();
     }
 
-    public function searchStateByPoint(string $wktGeoPoint): array
+    public function searchStateByPoint(GeoPoint $geoPoint): array
     {
         return State::whereRaw(
             sprintf(
                 "ST_Contains(coordinates, ST_GeomFromText('%s'))",
-                $wktGeoPoint,
+                $geoPoint->toWKT(),
             ))
             ->firstOrFail()
             ->toArray();
