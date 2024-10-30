@@ -13,47 +13,9 @@ class GeoDataService
 {
     protected GeoDataProviderContract $provider;
 
-    public function __construct()
+    public function __construct(GeoDataFactory $factory)
     {
-        $defaultProvider = config('geo_data.default');
-        $this->loadProvider($defaultProvider);
-    }
-
-    private function loadProvider(string $providerKey): void
-    {
-        $providersConfig = config('geo_data.providers');
-
-        if (!isset($providersConfig[$providerKey])) {
-            throw new InvalidArgumentException("Provider {$providerKey} not configured.");
-        }
-
-        $providerConfig = $providersConfig[$providerKey];
-
-        switch ($providerKey) {
-            case 'nominatim':
-                $this->provider = new NominatimProvider(
-                    $providerConfig['base_url'],
-                    $providerConfig['user_agent'],
-                    $providerConfig['default_params']
-                );
-                break;
-
-            case 'mock':
-                $this->provider = new MockProvider(
-                    $providerConfig['base_url'],
-                    $providerConfig['user_agent'],
-                    $providerConfig['default_params']
-                );
-                break;
-
-            default:
-                throw new InvalidArgumentException("Provider {$providerKey} not recognized.");
-        }
-    }
-
-    public function switchProvider(string $providerKey): void
-    {
-        $this->loadProvider($providerKey);
+        $this->provider = $factory->make(config('geo_data.default'));
     }
 
     public function fetchPolygons(

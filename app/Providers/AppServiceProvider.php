@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use App\Events\JobCompleted as CustomJobCompleted;
 use App\Events\JobFailed as CustomJobFailed;
+use App\Integrations\GeoData\GeoDataFactory;
 use App\Integrations\GeoData\GeoDataProviderContract;
 use App\Integrations\GeoData\GeoDataService;
+use App\Integrations\GeoData\Providers\MockProvider;
+use App\Integrations\GeoData\Providers\NominatimProvider;
 use App\Listeners\JobEventSubscriber;
 use App\Repositories\CachedDataRepository;
 use App\Repositories\DataRepository;
@@ -28,9 +31,25 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Integrations
-//        $this->app->bind(GeoDataService::class, function (Application $app) {
-//            return $app->make(GeoDataService::class);
-//        });
+        $this->app->bind(GeoDataService::class, function (Application $app) {
+            return new GeoDataService($app->make(GeoDataFactory::class));
+        });
+
+        $this->app->singleton(GeoDataFactory::class, function (Application $app) {
+            return new GeoDataFactory([
+                'nominatim' => NominatimProvider::class,
+                'mock' => MockProvider::class,
+            ]);
+        });
+
+        $this->app->bind(NominatimProvider::class, function (Application $app) {
+            return new NominatimProvider(
+                config('geo_data.providers.nominatim.base_url'),
+                config('geo_data.providers.nominatim.user_agent'),
+                config('geo_data.providers.nominatim.default_params'),
+            );
+        });
+
 
         // Services
         $this->app->bind(DataServiceContract::class, function (Application $app) {
